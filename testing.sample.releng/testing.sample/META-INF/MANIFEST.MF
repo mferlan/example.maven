@@ -5,3 +5,4 @@ Bundle-SymbolicName: de.atron.testing.sample
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: ATRON electronic GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.apache.commons.lang3

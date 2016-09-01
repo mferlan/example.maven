@@ -31,6 +31,7 @@
  *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 package de.atron.test.sample;
 
+import org.apache.commons.lang3.Validate;
 
 /**
  *
@@ -41,6 +42,8 @@ public class TestedService {
     private MockedInterface mocked;
 
     public double positiveDivide(double dividend, double divisor) {
+        Validate.inclusiveBetween(0, Double.MAX_VALUE, divisor, "Divisor " + divisor + " below 0.0");
+        Validate.inclusiveBetween(0, Double.MAX_VALUE, dividend, "Dividend " + dividend + " below 0.0");
         if (dividend < 0.0d) {
             throw new IllegalArgumentException("Dividend below 0.0");
         }
