@@ -9,7 +9,7 @@
 
 	<modules>
 		<module>testing.sample</module>
-<!-- 		<module>testing.sample.test</module> -->
+		<!-- <module>testing.sample.test</module> -->
 	</modules>
 
 	<properties>
@@ -21,7 +21,8 @@
 		<assembly-version>2.4</assembly-version>
 		<replacer-version>1.4.1</replacer-version>
 		<clean-version>2.6.1</clean-version>
-
+		
+<!-- 		http://wiki.eclipse.org/Tycho/Reference_Card#Examplary_parent_POM -->
 		<!-- Tycho properties -->
 		<tycho-version>0.24.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
@@ -32,14 +33,6 @@
 		<platform-repo.url>http://download.eclipse.org/eclipse/updates/4.5/</platform-repo.url>
 	</properties>
 
-	<dependencies>
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-	</dependencies>
 
 	<build>
 		<pluginManagement>
@@ -111,6 +104,28 @@
 	</build>
 
 	<profiles>
+		<profile>
+			<id>include-dependencies</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>org.apache.commons.lang3</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>pom-dependencies</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+					<version>3.4</version>
+				</dependency>
+			</dependencies>
+		</profile>
 		<profile>
 			<id>reproducible-qualifiers</id>
 			<activation>
