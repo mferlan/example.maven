@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.atron.testing.sample</groupId>
+	<artifactId>testing.sample.releng</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>features</module>
+		<module>bundles</module>
+		<module>tests</module>
+	</modules>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		
+	   <!-- Maven Plugin Versions -->
+		<assembly-version>2.4</assembly-version>
+		<replacer-version>1.4.1</replacer-version>
+		<clean-version>2.6.1</clean-version>
+
+		<!-- Tycho properties -->
+		<tycho-version>0.24.0</tycho-version>
+		<tycho-extras-version>${tycho-version}</tycho-extras-version>		
+		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
+		<tycho.showEclipseLog>true</tycho.showEclipseLog>
+		
+		
+		<baseline-repository>http://git/platform/downloads/example.maven/snapshots</baseline-repository>
+		<platform-repo.url>http://download.eclipse.org/eclipse/updates/4.5/</platform-repo.url>
+	</properties>
+
+
+
+	<build>
+			<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>${clean-version}</version>
+				</plugin>
+						<!-- To define the plugin version in your parent POM -->
+				<plugin>
+					<groupId>${tycho-groupid}</groupId>
+					<artifactId>tycho-versions-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho.extras</groupId>
+					<artifactId>tycho-source-feature-plugin</artifactId>
+					<version>${tycho-extras-version}</version>
+					<executions>
+						<execution>
+							<id>source-feature</id>
+							<phase>package</phase>
+							<goals>
+								<goal>source-feature</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- Configure qualifier replacement -->
+				<plugin>
+					<groupId>${tycho-groupid}</groupId>
+					<artifactId>tycho-packaging-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.eclipse.tycho.extras</groupId>
+							<artifactId>tycho-buildtimestamp-jgit</artifactId>
+							<version>${tycho-extras-version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<archive>
+							<!-- Workaround to Bug 411443: Avoids extremely long filenames in 
+								META-INF/maven. -->
+							<!-- See https://bugs.eclipse.org/bugs/show_bug.cgi?id=411443 -->
+							<addMavenDescriptor>false</addMavenDescriptor>
+						</archive>
+						<timestampProvider>jgit</timestampProvider>
+						<!-- generate new qualifier even if it is only the pom.xml that changed 
+							<jgit.ignore> pom.xml </jgit.ignore> -->
+						<format>yyyyMMdd-HHmm</format>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>${tycho-groupid}</groupId>
+					<artifactId>tycho-p2-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<baselineRepositories>
+							<repository>
+								<url>${baseline-repository}</url>
+							</repository>
+						</baselineRepositories>
+					</configuration>
+					<executions>
+						<execution>
+							<!-- Don't attach (default) metadata before the "generate-source-feature" 
+								execution. -->
+							<id>default-p2-metadata-default</id>
+							<configuration>
+								<attachP2Metadata>false</attachP2Metadata>
+							</configuration>
+						</execution>
+						<execution>
+							<!-- Do attach metadata after the "generate-source-feature" execution. -->
+							<id>attach-p2-metadata</id>
+							<phase>package</phase>
+							<goals>
+								<goal>p2-metadata</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>${tycho-groupid}</groupId>
+					<artifactId>tycho-source-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<!-- Enable Tycho -->
+			<plugin>
+				<groupId>${tycho-groupid}</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+
+			<!-- Configure Source Encoding -->
+			<plugin>
+				<groupId>${tycho-groupid}</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+
+
+			<!-- Publish repository -->
+			<plugin>
+				<groupId>${tycho-groupid}</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<executionEnvironment>JavaSE-1.8</executionEnvironment>
+					<pomDependencies>consider</pomDependencies>
+					<targetDefinitionIncludeSource>honor</targetDefinitionIncludeSource>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<repositories>
+		<repository>
+			<id>platform-repo</id>
+			<layout>p2</layout>
+			<url>${platform-repo.url}</url>
+		</repository>
+	</repositories>
+
+	<!-- <pluginRepositories> -->
+	<!-- <pluginRepository> -->
+	<!-- <id>JBoss-wso2maven2</id> -->
+	<!-- <url>http://maven.wso2.org/nexus/content/repositories/wso2maven2/</url> -->
+	<!-- </pluginRepository> -->
+	<!-- </pluginRepositories> -->
+</project>

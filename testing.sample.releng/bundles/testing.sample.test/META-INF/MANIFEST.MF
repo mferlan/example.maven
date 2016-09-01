@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Testing sample Test fragment
+Bundle-SymbolicName: de.atron.testing.sample.test
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: de.atron.testing.sample
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: junit.framework;version="4.12.0",
+ org.assertj.core.api;version="3.4.1",
+ org.hamcrest;version="1.3.0",
+ org.hamcrest.core;version="1.3.0",
+ org.hamcrest.internal;version="1.3.0",
+ org.junit;version="4.12.0",
+ org.junit.matchers;version="4.12.0",
+ org.junit.rules;version="4.12.0",
+ org.junit.validator;version="4.12.0",
+ org.mockito,
+ org.mockito.exceptions,
+ org.mockito.exceptions.base,
+ org.mockito.listeners,
+ org.mockito.mock,
+ org.mockito.stubbing,
+ org.mockito.stubbing.answers,
+ org.mockito.verification
