@@ -21,8 +21,8 @@
 		<assembly-version>2.4</assembly-version>
 		<replacer-version>1.4.1</replacer-version>
 		<clean-version>2.6.1</clean-version>
-		
-<!-- 		http://wiki.eclipse.org/Tycho/Reference_Card#Examplary_parent_POM -->
+
+		<!-- http://wiki.eclipse.org/Tycho/Reference_Card#Examplary_parent_POM -->
 		<!-- Tycho properties -->
 		<tycho-version>0.24.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
@@ -30,7 +30,6 @@
 		<tycho.showEclipseLog>true</tycho.showEclipseLog>
 
 		<baseline-repository>http://git/platform/downloads/example.maven/snapshots</baseline-repository>
-		<platform-repo.url>http://download.eclipse.org/eclipse/updates/4.5/</platform-repo.url>
 	</properties>
 
 
@@ -105,14 +104,50 @@
 
 	<profiles>
 		<profile>
-			<id>include-dependencies</id>
+			<id>final</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>testing.sample.test</module>
+			</modules>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>${tycho-groupid}</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<ignoreTychoRepositories>true</ignoreTychoRepositories>
+							<target>
+								<artifact>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<classifier>${project.parent.relativePath}/testing.sample2.target/testing.sample</classifier>
+								</artifact>
+								<dependency-resolution>
+									<optionalDependencies>ignore</optionalDependencies>
+								</dependency-resolution>
+							</target>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>include-dependencies</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
 				<module>org.apache.commons.lang3</module>
 			</modules>
 		</profile>
+
 		<profile>
 			<id>pom-dependencies</id>
 			<activation>
@@ -126,6 +161,79 @@
 				</dependency>
 			</dependencies>
 		</profile>
+
+		<profile>
+			<id>pom-dependencies-with-target</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+					<version>3.4</version>
+				</dependency>
+			</dependencies>
+
+			<modules>
+				<module>testing.sample.target</module>
+			</modules>
+		</profile>
+
+
+		<profile>
+			<id>no-target-file</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<repositories>
+				<repository>
+					<id>platform-repo</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/eclipse/updates/4.5/</url>
+				</repository>
+			</repositories>
+		</profile>
+
+		<profile>
+			<id>with-target</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>${tycho-groupid}</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<ignoreTychoRepositories>true</ignoreTychoRepositories>
+							<target>
+								<artifact>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<classifier>${project.parent.relativePath}/testing.sample.target/testing.sample</classifier>
+								</artifact>
+								<dependency-resolution>
+									<optionalDependencies>ignore</optionalDependencies>
+								</dependency-resolution>
+							</target>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+
+
+
+
+
+
+
+
 		<profile>
 			<id>reproducible-qualifiers</id>
 			<activation>
@@ -200,18 +308,6 @@
 		</profile>
 	</profiles>
 
-	<repositories>
-		<repository>
-			<id>platform-repo</id>
-			<layout>p2</layout>
-			<url>${platform-repo.url}</url>
-		</repository>
-	</repositories>
 
-	<!-- <pluginRepositories> -->
-	<!-- <pluginRepository> -->
-	<!-- <id>JBoss-wso2maven2</id> -->
-	<!-- <url>http://maven.wso2.org/nexus/content/repositories/wso2maven2/</url> -->
-	<!-- </pluginRepository> -->
-	<!-- </pluginRepositories> -->
+
 </project>
