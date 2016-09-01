@@ -29,10 +29,23 @@
 					<bundleStartLevel>
 					</bundleStartLevel>
 					<dependencies>
+<!-- 						<dependency> -->
+<!-- 							<type>eclipse-feature</type> -->
+<!-- 							<artifactId>org.eclipse.equinox.core.feature</artifactId> -->
+<!-- 						</dependency> -->
 					</dependencies>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.core/org.eclipse.core.runtime -->
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>org.eclipse.core.runtime</artifactId>
+			<version>3.7.0</version>
+		</dependency>
+	</dependencies>
 </project>
