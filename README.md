@@ -40,9 +40,11 @@ There are additional projects
 #Couple of links:
   
 http://www.vogella.com/tutorials/EclipseTycho/article.html
+
 http://stackoverflow.com/questions/20842256/how-to-manage-tycho-eap-versionning-correctly
 
 https://git.eclipse.org/c/orbit/orbit-recipes.git/tree/README.md
+
 https://github.com/eclipse/ebr
     
 
