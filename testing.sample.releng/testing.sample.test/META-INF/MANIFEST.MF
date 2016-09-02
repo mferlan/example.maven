@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Testing sample Test fragment
 Bundle-SymbolicName: de.atron.testing.sample.test
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1
 Fragment-Host: de.atron.testing.sample
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: junit.framework,
