@@ -77,3 +77,11 @@ Information about package
 11. Search for registered service
 
 	services (objectClass=de.atron.test.sample.MockedInterface)
+	
+12. List all commands
+
+	help
+	
+13. Execute divide command
+
+	divide 15 3
