@@ -29,9 +29,11 @@
  *                                                                            *
  * $$Id: $$                                                                   *
  *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-package de.atron.test.sample;
+package de.atron.test.sample.consumer;
 
 import org.apache.commons.lang3.Validate;
+
+import de.atron.test.sample.MockedInterface;
 
 /**
  *

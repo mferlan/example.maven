@@ -29,7 +29,7 @@
  *                                                                            *
  * $$Id: $$                                                                   *
  *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-package de.atron.test.sample;
+package de.atron.test.sample.consumer;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -38,6 +38,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import de.atron.test.sample.MockedInterface;
+import de.atron.test.sample.consumer.TestedService;
 
 /**
  *
