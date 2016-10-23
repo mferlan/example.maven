@@ -36,6 +36,7 @@ import org.apache.commons.lang3.Validate;
 /**
  *
  * @author Uwe Plonus
+ * @author Martin Ferlan
  */
 public class TestedService {
 
