@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Testing Sample
-Bundle-SymbolicName: de.atron.testing.sample
-Bundle-Version: 1.0.2.qualifier
-Bundle-Vendor: ATRON electronic GmbH
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: org.apache.commons.lang3
