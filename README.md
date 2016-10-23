@@ -1,52 +1,102 @@
-# example.maven
-Repository for OSGI / Maven playground
+# Add OSGI metadata
 
-#SampleTest
-POM-first project using Junit, mockito, assertj, commons-lang3 libraries that produces OSGI-fied jar
-OSGI-fication is done using bnd maven plugin. http://njbartlett.name/2015/03/27/announcing-bnd-maven-plugin.html
+OSGi metadata is simply a number of extra headers in the Jar's META-INF/MANIFEST.MF file. While quite a large number of OSGi headers exist, the following would typically be the ones that you'd find in a library Jar file that provides OSGi metadata.
+	
+	Bundle-ManifestVersion: 2
+	Bundle-SymbolicName: de.atron.test.sample.consumer
+	Bundle-Version: 1.0.0
+	Export-Package: de.atron.test.sample.consumer;version="1.0.0"
+	Import-Package: de.atron.test.sample.service;version="[1.0, 2)"
 
-#testing.sample.releng
-MANIFEST-first project using Junit, mockito, assertj,commons-lang3 libraries.
-SampleTest has been splitted into 2 main projects
- - testing.sample  - main project with implementation
- - testing.sample.test - fragment containing test classes
+ Manifest will not be maintained by hand. According to OSGI Alliance, the manifest is a readable format but it was never intended to be human writable except for emergencies.
+
+For maintaining MANIFEST.MF we will use maven plugin
+
+	<plugin>
+		<groupId>biz.aQute.bnd</groupId>
+		<artifactId>bnd-maven-plugin</artifactId>
+		<version>3.3.0</version>
+	</plugin>
+
+To attach OSGI metadata to our bundles we need to add following plugin configuration to our projects:
+
+	<plugin>
+		<groupId>biz.aQute.bnd</groupId>
+		<artifactId>bnd-maven-plugin</artifactId>
+		<version>3.3.0</version>
+		<executions>
+			<execution>
+				<goals>
+					<goal>bnd-process</goal>
+				</goals>
+			</execution>
+		</executions>
+	</plugin>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-jar-plugin</artifactId>
+		<configuration>
+			<useDefaultManifestFile>true</useDefaultManifestFile>
+		</configuration>
+	</plugin>
+
+Let's take a look at our modules
+
+## sample.service
+
+Module *sample.service* defines interface `de.atron.test.sample.MockedInterface` and its implementation `de.atron.test.sample.impl.MockedService`. Implementation and interface are separated into each own packages so this makes things simpler. 
+This module's API is:
+	- package `de.atron.test.sample`
+
+By default, *bnd-maven-plugin* does not export any package.
+We need to export this package so that other bundles can consume it, and we do it by adding file to root named **bnd.bnd** containing single line:
+
+	Export-Package: de.atron.test.sample
+	
+This results with following generated MANIFEST.MF
+
+	Manifest-Version: 1.0
+	Bundle-ManifestVersion: 2
+	Bundle-Name: sample.service
+	Bundle-SymbolicName: sample.service
+	Bundle-Version: 0.1.0.201610241941
+	Import-Package: de.atron.test.sample
+	Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+	Export-Package: de.atron.test.sample;version="0.1.0"
+	Private-Package: de.atron.test.sample.impl
+	Archiver-Version: Plexus Archiver
+	Built-By: ferlan
+	Tool: Bnd-3.3.0.201609221906
+	Bnd-LastModified: 1477338070195
+	Created-By: 1.8.0_51 (Oracle Corporation)
+	Build-Jdk: 1.8.0_51
+	
+## sample.consumer
+
+Module *sample.consumer* defines single class referencing `de.atron.test.sample.MockedInterface`.
+This module does not have any public API and *bnd-maven-plugin* will automatically calculate required dependencies. Our module has runtime dependencies to following maven artifact
+ - sample.service
+ - commons-lang3
  
- testing.sample.releng itself is:
-    - parent pom for all projects
-    - multimodule project listing all modules
-    - tycho configuration project - enables and configures tycho plugin
-    - releng means Release engineering and not sure if it is correct name, as it has bigger role
-    - projects are organized hierarchical, but for this case flat structure would be better
-    
-There are additional projects
-- org.apache.commons.lang3 - osgification of commons-lang3 available as project. commons-lang3.jar downloaded thru maven but under source version control
-   It is enabled with profile "include-dependencies". Alternative to this was to get dependency thru maven repository directly (profile "pom-dependencie") but 
-   has couple of limitations e.g. violation DRY principle  (dependency in pom.xml and MANIFEST.MF) and problem referencing in development (PDE development)
-- testing.sample.target - project listing target definition files for projects
-        - testing.sample.target  - definition file specifies p2 software site and directory for third-party dependencies. Enabled with profile "pom-dependencies-with-target"
-                Idea is that dependencies for build are declared in parent pom.xml and for development as a directory in testing.sample.target.
-                But this still violates DRY principle. As is problematic when library is not OSGI compliant.
-        - testing.sample2.target - definition file works only with p2 software sites. Site for third party libraries is created and mainteined with project testing.sample.p2.repository
-- testing.sample.p2.repository - is a maven project with single goal of listing all third-party libraries without official p2 repository.
-        Project uses p2-maven-plugin (https://github.com/reficio/p2-maven-plugin)  to OSGI-fy dependencies and create p2 site out of them.
-        The only thing that is left is to publish it to some server and use it in testing.sample2.target
-        
-        
-  TODO:
-  testing.sample.releng contains profiles for different attempts to cope with problem of referencing third party dependencies in MANIFEST-first approach of programming OSGI bundles.
-  Better approach would be to use different branches for different scenarios
-  
+ Test scope dependencies are not taken into consideration when generating manifest.mf 
+ 
+This results with following generated MANIFEST.MF
+ 
+	Manifest-Version: 1.0
+	Bundle-ManifestVersion: 2
+	Bundle-Name: sample.consumer
+	Bundle-SymbolicName: sample.consumer
+	Bundle-Version: 0.1.0.201610241941
+	Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+	Import-Package: de.atron.test.sample;version="[0.1,1)",org.apache.comm
+	 ons.lang3;version="[3.4,4)"
+	Private-Package: de.atron.test.sample.consumer
+	Tool: Bnd-3.3.0.201609221906
+	Archiver-Version: Plexus Archiver
+	Built-By: ferlan
+	Bnd-LastModified: 1477338073745
+	Created-By: 1.8.0_51 (Oracle Corporation)
+	Build-Jdk: 1.8.0_51
 
-#Couple of links:
-  
-http://www.vogella.com/tutorials/EclipseTycho/article.html
-
-http://stackoverflow.com/questions/20842256/how-to-manage-tycho-eap-versionning-correctly
-
-https://git.eclipse.org/c/orbit/orbit-recipes.git/tree/README.md
-
-https://github.com/eclipse/ebr
-    
-
-
-
+	
+More information about this plugin and how to use it can be read on  <http://njbartlett.name/2015/03/27/announcing-bnd-maven-plugin.html>. This plugin is based on *bnd* tool( <http://bnd.bndtools.org/> ).
