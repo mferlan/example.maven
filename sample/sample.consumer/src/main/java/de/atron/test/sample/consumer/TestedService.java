@@ -32,6 +32,8 @@
 package de.atron.test.sample.consumer;
 
 import org.apache.commons.lang3.Validate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import de.atron.test.sample.MockedInterface;
 
@@ -40,9 +42,15 @@ import de.atron.test.sample.MockedInterface;
  * @author Uwe Plonus
  * @author Martin Ferlan
  */
+@Component
 public class TestedService {
-
+	
     private MockedInterface mocked;
+    
+    @Reference(service=MockedInterface.class)
+    public void setMocked(MockedInterface mocked) {
+		this.mocked = mocked;
+	}
 
     public double positiveDivide(double dividend, double divisor) {
         Validate.inclusiveBetween(0, Double.MAX_VALUE, divisor, "Divisor " + divisor + " below 0.0");

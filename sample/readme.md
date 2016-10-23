@@ -38,3 +38,42 @@ firstbundle 1
 firstbundle 2
 firstbundle 3
 TIP:You can remove all installed bundles with the -clean parameter.
+
+List all bundles
+	
+	ss
+
+Start desired bundles
+
+	start <bundle_id>
+	
+Information about package
+
+	packages de.atron.test.sample
+
+7. download: 
+ - osgi.services 
+	
+	http://dist.wso2.org/maven2/org/eclipse/osgi/org.eclipse.osgi.services/3.2.0.v20090306-1900/org.eclipse.osgi.services-3.2.0.v20090306-1900.jar
+ - osgi declarative service (+util)
+		
+	http://dist.wso2.org/maven2/org/eclipse/equinox/org.eclipse.equinox.ds/1.1.0.v20090520-1800/org.eclipse.equinox.ds-1.1.0.v20090520-1800.jar
+	
+	http://dist.wso2.org/maven2/org/eclipse/equinox/org.eclipse.equinox.util/1.0.100.v20090520-1800/org.eclipse.equinox.util-1.0.100.v20090520-1800.jar
+	
+8. copy them inside bundles folder, rename them and strip version and install them and start 'org.eclipse.equinox.ds'
+	
+	install file:bundles\org.eclipse.osgi.services.jar
+	install file:bundles\org.eclipse.equinox.util.jar
+	install file:bundles\org.eclipse.equinox.ds.jar
+	
+9. List all component with command
+ 
+	list
+10. Inspect component using
+
+	component <component_id>
+
+11. Search for registered service
+
+	services (objectClass=de.atron.test.sample.MockedInterface)

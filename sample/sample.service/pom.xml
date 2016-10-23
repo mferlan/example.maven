@@ -13,6 +13,17 @@
 		<artifactId>sample.parent</artifactId>
 		<version>1.0.0</version>
 	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi.services</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

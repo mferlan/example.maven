@@ -31,12 +31,15 @@
  *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 package de.atron.test.sample.impl;
 
+import org.osgi.service.component.annotations.Component;
+
 import de.atron.test.sample.MockedInterface;
 
 /**
  *
  * @author Uwe Plonus
  */
+@Component
 public class MockedService implements MockedInterface {
 
     @Override

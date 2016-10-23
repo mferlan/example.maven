@@ -43,6 +43,11 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi.services</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
