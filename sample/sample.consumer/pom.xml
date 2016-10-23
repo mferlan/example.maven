@@ -5,20 +5,20 @@
 
 	<groupId>de.atron.testing</groupId>
 	<artifactId>sample.consumer</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>de.atron.testing</groupId>
 		<artifactId>sample.parent</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<dependencies>
 		<dependency>
 			<groupId>de.atron.testing</groupId>
 			<artifactId>sample.service</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
