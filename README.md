@@ -8,7 +8,7 @@ OSGi metadata is simply a number of extra headers in the Jar's META-INF/MANIFEST
 	Export-Package: de.atron.test.sample.consumer;version="1.0.0"
 	Import-Package: de.atron.test.sample.service;version="[1.0, 2)"
 
- Manifest will not be maintained by hand. According to OSGI Alliance, the manifest is a readable format but it was never intended to be human writable except for emergencies.
+ According to OSGI Alliance, the manifest is a readable format but it was never intended to be human writable except for emergencies. This is something that OSGI Alliance approach differs from Eclipse community approach where they value MANIFEST-first development (MANIFEST.MF is maintained with source code, with help of UI editors).
 
 For maintaining MANIFEST.MF we will use maven plugin
 
