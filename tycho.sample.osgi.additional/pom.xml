@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.atron.platform</groupId>
+	<artifactId>de.atron.tycho.sample.osgi.additional</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0</version>
+
+	<!-- do not reference releng as parent, due to different tycho versions -->
+
+	<properties>
+		<!-- Maven props -->
+		<maven.install.skip>true</maven.install.skip>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<!-- using higher version than 3.4.1 -->
+		<assertj.version>3.5.2</assertj.version>
+		<mockito.version>1.10.19</mockito.version>
+		<hamcrest.version>1.3</hamcrest.version>
+		<junit.version>4.12</junit.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.reficio</groupId>
+				<artifactId>p2-maven-plugin</artifactId>
+				<version>1.1.2-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<id>org.apache.commons:commons-lang3:3.4</id>
+									<source>true</source>
+								</artifact>
+								<!-- test -->
+								<artifact>
+									<id>org.assertj:assertj-core:${assertj.version}</id>
+									<source>true</source>
+									<transitive>true</transitive>
+									<!-- cannot override hitting https://issues.apache.org/jira/browse/FELIX-4005 -->
+									<!-- should be fixed with latest reficio snapshot (but it is no 
+										published) https://github.com/reficio/p2-maven-plugin/issues/95 -->
+									<!-- <override>true</override> -->
+								</artifact>
+								<artifact>
+									<id>javax.xml.parsers:jaxp-api:jar:1.4.5</id>
+									<source>true</source>
+									<transitive>true</transitive>
+								</artifact>
+								<artifact>
+									<id>org.hamcrest:hamcrest-core:${hamcrest.version}</id>
+									<source>true</source>
+									<transitive>true</transitive>
+								</artifact>
+								<artifact>
+									<id>junit:junit:${junit.version}</id>
+									<source>true</source>
+									<transitive>true</transitive>
+									<override>true</override>
+									<instructions>
+										<Export-Package>*;version="4.12.0"</Export-Package>
+									</instructions>
+								</artifact>
+								<artifact>
+									<id>org.mockito:mockito-core:${mockito.version}</id>
+									<source>true</source>
+									<transitive>true</transitive>
+									<override>true</override>
+									<instructions>
+										<Bundle-SymbolicName>org.mockito.core</Bundle-SymbolicName>
+										<!-- repackaged -->
+										<Bundle-Version>${mockito.version}.20160621</Bundle-Version>
+										<Require-Bundle>org.hamcrest.core;bundle-version="1.3.0"</Require-Bundle>
+									</instructions>
+									<excludes>
+										<!-- matches hamcrest regardless of version -->
+										<exclude>org.hamcrest:hamcrest-core:jar:</exclude>
+									</excludes>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>8.1.5.v20120716</version>
+				<configuration>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<webAppSourceDirectory>${basedir}/target/repository/</webAppSourceDirectory>
+					<webApp>
+						<contextPath>/tycho.sample.osgi.additional</contextPath>
+					</webApp>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+	<pluginRepositories>
+		<!-- https://github.com/reficio/p2-maven-plugin -->
+		<pluginRepository>
+			<id>reficio</id>
+			<url>http://repo.reficio.org/maven/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>
