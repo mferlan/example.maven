@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Tycho Sample Product" uid="de.atron.tycho.sample" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-console -consoleLog
+      </programArgs>
+      <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms256m -Xmx1024m
+-Declipse.ignoreApp=true
+-Dosgi.noShutdown=true
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
+   </launcherArgs>
+
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.equinox.core.feature" version="1.2.102.v20160128-1406"/>
+      <feature id="de.atron.tycho.sample.feature" version="1.0.0.qualifier"/>
+   </features>
+
+</product>

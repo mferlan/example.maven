@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: de.atron.tycho.sample.consumer.test
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: de.atron.tycho.sample.consumer
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.mockito.core;bundle-version="1.10.19",
+ org.hamcrest.core;bundle-version="1.3.0",
+ org.objenesis;bundle-version="2.1.0",
+ junit;bundle-version="4.12.0",
+ org.assertj.core;bundle-version="3.5.2"

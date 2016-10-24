@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Consumer
+Bundle-SymbolicName: de.atron.tycho.sample.consumer
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.atron.test.sample,
+ org.apache.commons.lang3;version="3.4.0",
+ org.osgi.service.component.annotations

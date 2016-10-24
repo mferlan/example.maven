@@ -11,5 +11,7 @@
 	</parent>
 
 	<modules>
+		<module>tycho.sample.service</module>
+		<module>tycho.sample.consumer</module>
 	</modules>
 </project>

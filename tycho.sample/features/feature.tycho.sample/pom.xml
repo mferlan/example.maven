@@ -1,17 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.atron.tycho</groupId>
-	<artifactId>de.atron.tycho.sample.tests</artifactId>
-	<packaging>pom</packaging>
+	<artifactId>de.atron.tycho.sample.feature</artifactId>
+	<packaging>eclipse-feature</packaging>
 
 	<parent>
 		<groupId>de.atron.tycho</groupId>
-		<artifactId>de.atron.tycho.sample.root</artifactId>
+		<artifactId>de.atron.tycho.sample.features</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<modules>
-		<module>tycho.sample.consumer.test</module>
-	</modules>
 </project>
