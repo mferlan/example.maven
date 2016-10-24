@@ -39,7 +39,7 @@ import de.atron.test.sample.MockedInterface;
  *
  * @author Uwe Plonus
  */
-@Component
+@Component(name="mocked-service")
 public class MockedService implements MockedInterface {
 
     @Override

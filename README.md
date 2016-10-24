@@ -1,52 +1,149 @@
-# example.maven
-Repository for OSGI / Maven playground
+#OSGI services
 
-#SampleTest
-POM-first project using Junit, mockito, assertj, commons-lang3 libraries that produces OSGI-fied jar
-OSGI-fication is done using bnd maven plugin. http://njbartlett.name/2015/03/27/announcing-bnd-maven-plugin.html
+Osgi services are collaboration model between OSGI modules. Services can be declared
+ - programatically using OSG API
+ - Declarative Service
+ - Spring DM
+ - Blueprint
 
-#testing.sample.releng
-MANIFEST-first project using Junit, mockito, assertj,commons-lang3 libraries.
-SampleTest has been splitted into 2 main projects
- - testing.sample  - main project with implementation
- - testing.sample.test - fragment containing test classes
+For our use case, the simplest variant is using declarative services.
+The OSGi declarative services (DS) functionality allows you to define and consume services via metadata (XML) without any dependency in your source code to the OSGi framework.
+*bnd-maven-plugin* supports the use of annotations in your source code to generate this meta-data at build time automatically.
+
+The OSGi service component is responsible for starting the service (service component). Service components consist of an XML description (component description) and an object (component instance). The component description contains all information about the service component, e.g., the class name of the component instance and the service interface it provides. Plug-ins typically define component descriptions in a directory called OSGI-INF.
+
+A reference to the component description file is entered in the MANIFEST.MF file via the Service-Component property. If the OSGi runtime finds such a reference, the org.eclipse.equinox.ds plug-in creates the corresponding service.
+
+For us, as we are going to use annotation to define components this is not so important.
+To use annotations both *sample.service* and *sample.consumer* module must declared dependency to org.eclipse.osgi.services that contains osgi annotations (package org.osgi.service.component.annotations).
+
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi.services</artifactId>
+		</dependency>
+		
+### Define a service
+Annotate implementation class with annotation @Component  and that is it. 
+
+	@Component(name="mocked-service")
+	public class MockedService implements MockedInterface {
+	
+	    @Override
+	    public double divide(double dividend, double divisor) {
+	        return dividend / divisor;
+	    }
+	}
+
+Maven plugin will generate component descriptor inside OSGI-INF called **mocked-service.xml**
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<component name="mocked-service">
+	  <implementation class="de.atron.test.sample.impl.MockedService"/>
+	  <service>
+	    <provide interface="de.atron.test.sample.MockedInterface"/>
+	  </service>
+	</component>
+
+Manifest will be updated and Service-Component added:
+
+	Service-Component: OSGI-INF/mocked-service.xml
+
+##Define a consumer of a service reference
+Annotate MockedInterface consumer with @Component. And setter for MockedInterface with
+@Reference
+
+	@Component
+	public class TestedService {
+		
+	    private MockedInterface mocked;
+	    
+	    @Reference
+	    public void setMocked(MockedInterface mocked) {
+			this.mocked = mocked;
+		}
+		...
+	}
  
- testing.sample.releng itself is:
-    - parent pom for all projects
-    - multimodule project listing all modules
-    - tycho configuration project - enables and configures tycho plugin
-    - releng means Release engineering and not sure if it is correct name, as it has bigger role
-    - projects are organized hierarchical, but for this case flat structure would be better
-    
-There are additional projects
-- org.apache.commons.lang3 - osgification of commons-lang3 available as project. commons-lang3.jar downloaded thru maven but under source version control
-   It is enabled with profile "include-dependencies". Alternative to this was to get dependency thru maven repository directly (profile "pom-dependencie") but 
-   has couple of limitations e.g. violation DRY principle  (dependency in pom.xml and MANIFEST.MF) and problem referencing in development (PDE development)
-- testing.sample.target - project listing target definition files for projects
-        - testing.sample.target  - definition file specifies p2 software site and directory for third-party dependencies. Enabled with profile "pom-dependencies-with-target"
-                Idea is that dependencies for build are declared in parent pom.xml and for development as a directory in testing.sample.target.
-                But this still violates DRY principle. As is problematic when library is not OSGI compliant.
-        - testing.sample2.target - definition file works only with p2 software sites. Site for third party libraries is created and mainteined with project testing.sample.p2.repository
-- testing.sample.p2.repository - is a maven project with single goal of listing all third-party libraries without official p2 repository.
-        Project uses p2-maven-plugin (https://github.com/reficio/p2-maven-plugin)  to OSGI-fy dependencies and create p2 site out of them.
-        The only thing that is left is to publish it to some server and use it in testing.sample2.target
-        
-        
-  TODO:
-  testing.sample.releng contains profiles for different attempts to cope with problem of referencing third party dependencies in MANIFEST-first approach of programming OSGI bundles.
-  Better approach would be to use different branches for different scenarios
-  
+Maven plugin will generate component descriptor inside OSGI-INF called **de.atron.test.sample.consumer.TestedService.xml** (default name, as no specific name was used for component)
+	
+	<?xml version="1.0" encoding="UTF-8"?>
+	<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.atron.test.sample.consumer.TestedService">
+	  <implementation class="de.atron.test.sample.consumer.TestedService"/>
+	  <reference name="Mocked" interface="de.atron.test.sample.MockedInterface" bind="setMocked"/>
+	</scr:component>
+	
 
-#Couple of links:
-  
-http://www.vogella.com/tutorials/EclipseTycho/article.html
+Manifest will be updated and Service-Component added:
 
-http://stackoverflow.com/questions/20842256/how-to-manage-tycho-eap-versionning-correctly
-
-https://git.eclipse.org/c/orbit/orbit-recipes.git/tree/README.md
-
-https://github.com/eclipse/ebr
-    
+	Service-Component: OSGI-INF/de.atron.test.sample.consumer.TestedService.xml
 
 
+
+##Required bundles
+To use declarative services the following plug-ins must be available at runtime.
+- org.eclipse.equinox.util - contains utility classes
+ - org.eclipse.equinox.ds - is responsible for reading the component metadata and for creating and registering the services based this information
+ - org.eclipse.osgi.services - service functionality used by declarative services
+ 
+**If you use OSGi DS services outside Eclipse RCP applications, you need to ensure that the org.eclipse.equinox.ds plug-ins is started before any application plug-in which wants to consume a service.**
+
+### Download Declarative Services dependencies
+Download following bundles
+ - eclipse.osgi.services 
+<http://dist.wso2.org/maven2/org/eclipse/osgi/org.eclipse.osgi.services/3.2.0.v20090306-1900/org.eclipse.osgi.services-3.2.0.v20090306-1900.jar>
+ - equinox declarative service
+<http://dist.wso2.org/maven2/org/eclipse/equinox/org.eclipse.equinox.ds/1.1.0.v20090520-1800/org.eclipse.equinox.ds-1.1.0.v20090520-1800.jar>
+- equinox utils (required by ds)
+<http://dist.wso2.org/maven2/org/eclipse/equinox/org.eclipse.equinox.util/1.0.100.v20090520-1800/org.eclipse.equinox.util-1.0.100.v20090520-1800.jar>
+
+Specified versions of dependencies are used due to compatibility with org.eclipse.osgi
+Mentioned bundles have already been downloaded and pushed to osgi-server/bundles.
+
+##Run OSGI server
+Use existing setup in folder *osgi-server*
+delete configuration directory if exists
+execute `run-osgi-server.bat` to start server
+
+	setibsl 4
+	
+	install file:bundles\sample.service-1.0.0.jar
+	
+	install file:bundles\sample.consumer-1.0.0.jar
+	
+	install file:bundles\commons-lang3-3.4.jar
+	
+	install file:bundles\org.eclipse.osgi.services.jar
+	
+	install file:bundles\org.eclipse.equinox.util.jar
+	
+	install file:bundles\org.eclipse.equinox.ds.jar
+	
+	setbsl 2 file:bundles\org.eclipse.equinox.ds.jar
+	
+	start file:bundles\org.eclipse.equinox.ds.jar
+	
+	start file:bundles\sample.service-1.0.0.jar
+	
+	start file:bundles\sample.consumer-1.0.0.jar
+	
+	list
+
+
+ Search for registered service
+
+			services (objectClass=de.atron.test.sample.MockedInterface)	
+			
+#Service Component Runtime Commands
+
+ - `list/ls [-c] [bundle id]` - Lists all components; add -c to display the complete info for each component;use *[bundle id]* to list the components of the specified bundle
+ - `component/comp <component id>` - Prints all available information about t
+he specified component;*<component id>* - The ID of the component as displayed by
+ the list command
+ - `enable/en <component id>` - Enables the specified component;*<component id>* - The ID of the component as displayed by
+ the list command
+ - `disable/dis <component id>` - Disables the specified component; *<component id>* - The ID of the component as displayed by
+ the list command
+ - `enableAll/enAll [bundle id]` - Enables all components; use *[bundle id]* to
+ enable all components of the specified bundle  
+- `disableAll/disAll [bundle id]` - Disables all components; use *[bundle id]* to disable all components of the specified bundle
 
