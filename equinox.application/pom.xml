@@ -19,6 +19,14 @@
 		<tycho.showEclipseLog>true</tycho.showEclipseLog>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>de.atron.testing</groupId>
+			<artifactId>sample.consumer</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+	
 	<build>
 		<plugins>
 			<!-- Enable Tycho -->
