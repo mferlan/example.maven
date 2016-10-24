@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Service
+Bundle-SymbolicName: de.atron.tycho.sample.service
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.osgi;bundle-version="3.10.100",
+ org.eclipse.osgi.services;bundle-version="3.5.0"
+Export-Package: de.atron.test.sample
