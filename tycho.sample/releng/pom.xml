@@ -11,5 +11,8 @@
 	</parent>
 
 	<modules>
+		<module>de.atron.tycho.sample.target</module>
+		<module>de.atron.tycho.sample.product</module>
+		<module>de.atron.tycho.sample.update</module>
 	</modules>
 </project>
