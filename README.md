@@ -1,52 +1,121 @@
-# example.maven
-Repository for OSGI / Maven playground
+#Run stand-alone OSGI server
+1. Download org.eclipse.osgi </br>
+<http://dist.wso2.org/maven2/org/eclipse/osgi/org.eclipse.osgi/3.4.2.R34x_v20080826-1230/org.eclipse.osgi-3.4.2.R34x_v20080826-1230.jar> </br>
+We are downloading this specific version of equinox framework, because it contains embedded console. 
+Later versions are are built without it. Console was extracted to interface *org.eclipse.equinox.console* while implementation is apache-felix-gogo  consisting out of 3 bundles. For simplicity, because we are manually installing jars, we will use this old version Equinox.
+2. Rename downloaded jar to org.eclipse.osgi.jar and copy it to a new place, e.g., c:\temp\osgi-server. Start your OSGi server via the following command.
+3. Open command like and </br>
+`cd c:/temp/osgi-server` </br>
+ Run stand-alone OSGI server</br>
+`java -jar org.eclipse.osgi.jar -console`
 
-#SampleTest
-POM-first project using Junit, mockito, assertj, commons-lang3 libraries that produces OSGI-fied jar
-OSGI-fication is done using bnd maven plugin. http://njbartlett.name/2015/03/27/announcing-bnd-maven-plugin.html
-
-#testing.sample.releng
-MANIFEST-first project using Junit, mockito, assertj,commons-lang3 libraries.
-SampleTest has been splitted into 2 main projects
- - testing.sample  - main project with implementation
- - testing.sample.test - fragment containing test classes
  
- testing.sample.releng itself is:
-    - parent pom for all projects
-    - multimodule project listing all modules
-    - tycho configuration project - enables and configures tycho plugin
-    - releng means Release engineering and not sure if it is correct name, as it has bigger role
-    - projects are organized hierarchical, but for this case flat structure would be better
-    
-There are additional projects
-- org.apache.commons.lang3 - osgification of commons-lang3 available as project. commons-lang3.jar downloaded thru maven but under source version control
-   It is enabled with profile "include-dependencies". Alternative to this was to get dependency thru maven repository directly (profile "pom-dependencie") but 
-   has couple of limitations e.g. violation DRY principle  (dependency in pom.xml and MANIFEST.MF) and problem referencing in development (PDE development)
-- testing.sample.target - project listing target definition files for projects
-        - testing.sample.target  - definition file specifies p2 software site and directory for third-party dependencies. Enabled with profile "pom-dependencies-with-target"
-                Idea is that dependencies for build are declared in parent pom.xml and for development as a directory in testing.sample.target.
-                But this still violates DRY principle. As is problematic when library is not OSGI compliant.
-        - testing.sample2.target - definition file works only with p2 software sites. Site for third party libraries is created and mainteined with project testing.sample.p2.repository
-- testing.sample.p2.repository - is a maven project with single goal of listing all third-party libraries without official p2 repository.
-        Project uses p2-maven-plugin (https://github.com/reficio/p2-maven-plugin)  to OSGI-fy dependencies and create p2 site out of them.
-        The only thing that is left is to publish it to some server and use it in testing.sample2.target
-        
-        
-  TODO:
-  testing.sample.releng contains profiles for different attempts to cope with problem of referencing third party dependencies in MANIFEST-first approach of programming OSGI bundles.
-  Better approach would be to use different branches for different scenarios
+#The OSGi console
+The OSGi console is like a command-line shell. In this console you can type a command to perform an OSGi action. This can be useful to analyze problems on the OSGi layer of your application.
+
+Use, for example, the command `ss` to get an overview of all bundles, their status and bundle-id.
+
+ Example console output:
+	
+		id      State       Bundle
+		0       ACTIVE      org.eclipse.osgi_3.4.2.R34x_v20080826-1230
+
+
+ - `help`   Lists the available commands.
+ 
+#Install sample bundles to OSGI server
+4. Build sample project using </br>
+`mvn clean package`
+5. Copy sample *sample.consumer-1.0.0.jar* to *C:/temp/osgi-server/bundles* </br>
+   Copy sample *sample.service-1.0.0.jar* to *C:/temp//osgi-server/bundles* </br></br>
+   Download dependency commons-lang3 </br>
+	<http://central.maven.org/maven2/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar> </br>
+   	and place it to C:\temp\osgi-server\bundles
+6. You can use "install URL" to install a bundle from a certain URL. For example to install your bundle from "c:\temp\osgi-server\bundles" use:</br>
+	`install file:bundles\commons-lang3-3.4.jar`</br>
+	`install file:bundles\sample.service-1.0.0.jar`</br>
+	`install file:bundles\sample.consumer-1.0.0.jar`</br>
+You can start then the bundle with start and the id. </br>
+**TIP:**You can remove all installed bundles with the -clean parameter.
+ 
+# Other commands
   
+ - Lists the installed bundles and their status.
 
-#Couple of links:
-  
-http://www.vogella.com/tutorials/EclipseTycho/article.html
+			ss		
+ Example console output:
 
-http://stackoverflow.com/questions/20842256/how-to-manage-tycho-eap-versionning-correctly
+			id      State       Bundle
+			0       ACTIVE      org.eclipse.osgi_3.4.2.R34x_v20080826-1230
+			1       INSTALLED   org.apache.commons.lang3_3.4.0
+			2       INSTALLED   sample.service_1.0.0
+			3       INSTALLED   sample.consumer_1.0.0
 
-https://git.eclipse.org/c/orbit/orbit-recipes.git/tree/README.md
+ - Lists bundles and their status that have sample within their name.
+ 
+			ss sample
+Example console output:
 
-https://github.com/eclipse/ebr
-    
+			id      State       Bundle
+			2       INSTALLED   sample.service_1.0.0
+			3       INSTALLED   sample.consumer_1.0.0
+
+ 
+ - Starts the bundle with the <bundle-id> ID.  (`start <bundle-id>`)
+ 
+			start 3
+ 			
+ This should automatically resolved dependent bundles.
+
+			id      State       Bundle
+			0       ACTIVE      org.eclipse.osgi_3.4.2.R34x_v20080826-1230
+			1       RESOLVED    org.apache.commons.lang3_3.4.0
+			2       RESOLVED    sample.service_1.0.0
+			3       ACTIVE      sample.consumer_1.0.0			
+
+- Shows information about the bundle with the <bundle-id> ID, including the registered and used services. (`bundle <bundle_id>`) 
+
+			bundle 3
+			
+- Information about package
+
+			packages de.atron.test.sample
+	
+Example output
+
+			osgi> packages de.atron.test.sample
+			de.atron.test.sample; version="1.0.0"<file:bundles/sample.service-1.0.0.jar [2]>
+			
+			  file:bundles/sample.consumer-1.0.0.jar [3] imports
 
 
+# osgi-server 
+All jars are being pushed to git repository in folder *osgi-server*. So  all examples can be tested in that folder
 
+# equinox.applicaton
+Equinox OSGI server built using Tycho maven plugin to export product definition containing only equinox core bundles.
+Product is plugin based, so that we can update it and add sample.consumer as dependencies.
+Edit *equinox.application.product* using notepad and in plugins tab add
+
+	<plugins>
+      <plugin id="sample.consumer"/>
+		...
+   			   
+Also, update pom.xml to add dependency to sample.consumer
+
+	<dependency>
+		<groupId>de.atron.testing<groupId>
+		<artifactId>sample.consumer</artifactId>
+		<version>1.0.0</version>
+	<dependency>
+	
+Install sample project
+
+	 mvn -f sample/pom.xml clean install
+	 
+Build equinox.application
+
+	mvn -f equinox.application/pom.xml clean verify
+	
+Under equinox.application/target/products/.../ find eclipse.exe and execute it.
+Try console commands to analyze system.
