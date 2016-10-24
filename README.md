@@ -1,68 +1,16 @@
-#Registration of console command provider
+#Convert projects to plugins (MANIFEST first approach)
 
-Osgi Framework defines possibility to extend console commands by registering OSGI service that implements CommandProvider interface.
+Differences:
+ - adds Plugin Nature
+ - classic java structure <br>
+ 		+ src<br>
+ 		+ bin
+ - test classes are separated into special project - fragment.
+ - Manifest must be maintained manually with nice editor support
+ - Declarative service XML must be maintained manually.  (eclipse 4.7 supports annotations in DS)
 
-The interface contains only methods for the help. The console should use inspection to find the commands. All public commands, starting with a '_' and taking a CommandInterpreter as parameter will be found. E.g.
+- target platform - pool of bundles and features. similar as maven repository.
+	Defined target based on running installation of eclipse with addition of 3rd party dependencies downloaded using maven copy-dependencies goal.
 
-	 public Object _hello( CommandInterpreter intp ) {
-	 	return "hello " + intp.nextArgument();
-	 }
+- product based on equinox.application just added newly created bundles with their dependencies
  
-So we defined class in module *sample.service*
-
-	@Component
-	public class MockedServiceCommandProvider implements CommandProvider {
-	
-		private MockedInterface mockedService;
-	
-		@Reference(service = MockedInterface.class)
-		public void setMockedService(MockedInterface mockedService) {
-			this.mockedService = mockedService;
-		}
-	
-		@Override
-		public String getHelp() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("Mocked Interface service commands");
-			builder.append("\n");
-			builder.append("divide - Enter two values, divident and divisor, and you will get the result of division");
-			builder.append("\n");
-			return builder.toString();
-		}
-	
-		public Object _divide(CommandInterpreter intp) {
-			String dividendStr = intp.nextArgument();
-			if (dividendStr == null) {
-				intp.println("Please enter two values, divident and divisor");
-				return null;
-			}
-	
-			String divisorStr = intp.nextArgument();
-			if (divisorStr == null) {
-				intp.println("Please enter two values, divident and divisor");
-				return null;
-			}
-	
-			double dividend = Double.parseDouble(dividendStr);
-			double divisor = Double.parseDouble(divisorStr);
-			double result = mockedService.divide(dividend, divisor);
-			intp.println("Result of division is: " + result);
-			return result;
-		}
-	
-	}
-	
-## Test command interpreter
-
-Install sample project
-
-	mvn -f sample/pom.xml clean install
-Build equinox.application
-
-	mvn -f equinox.application/pom.xml clean verify
-Under equinox.application/target/products/.../ find eclipse.exe and execute it. Try console commands to analyze system.
-
-Execute console command
-	
-	divide 15 4
-	

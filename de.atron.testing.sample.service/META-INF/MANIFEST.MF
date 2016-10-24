@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Service
+Bundle-SymbolicName: de.atron.testing.sample.service
+Bundle-Version: 1.0.0.qualifier
+Export-Package: de.atron.test.sample,
+ de.atron.test.sample.command,
+ de.atron.test.sample.impl
+Require-Bundle: org.eclipse.osgi;bundle-version="3.10.100",
+ org.eclipse.osgi.services;bundle-version="3.5.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Service-Component: OSGI-INF/mocked-service.xml,
+ OSGI-INF/command-provider.xml

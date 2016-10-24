@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Consumer
+Bundle-SymbolicName: de.atron.testing.sample.consumer
+Bundle-Version: 1.0.0.qualifier
+Import-Package: de.atron.test.sample,
+ org.apache.commons.lang3;version="3.4.0",
+ org.osgi.service.component.annotations;version="1.2.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: de.atron.test.sample.consumer
+Service-Component: OSGI-INF/component.xml
