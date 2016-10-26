@@ -12,18 +12,16 @@ Differences between maven project and PDE project:
 - target platform - pool of bundles and features. similar as maven repository.
 	Defined target based on running installation of eclipse with addition of 3rd party dependencies downloaded using maven copy-dependencies goal.
 
-- product based on equinox.application just added newly created bundles with their dependencies
  
 
 ## set up target platform
 
+The first thing you should do when setting up your workspace to develop manifest-first projects is to set up target platform.
 
-The set of plug-ins which you can use for your development or your build process to resolve the project dependencies is defined by the plug-ins in your workspace in addition with the plug-ins defined by your target platform. By default running running installation of eclipse is set as target platform.
+**What is target platform?** 
+The set of plug-ins which you can use for your development or your build process to resolve the project dependencies is defined by the plug-ins in your workspace in addition with the plug-ins defined by your target platform. By default running installation of eclipse is set as target platform.
 A target definition file allows us to define target platform and is typically shared between the developers to ensure that everyone is using the same basis for development.
 
-
-### How to get started with target platform
-<http://www.vogella.com/tutorials/EclipseTargetPlatform/article.html>
 
 Our project dependencies consists of
  - workspace projects
@@ -38,7 +36,10 @@ Our project dependencies consists of
  	+ assertj
  	and their transitive dependencies
  	
+Default target platform ( running eclipse jars ) is not good enough. It will provide us equinox core dependencies, but what about commons-lang3 and test dependencies.
 
+Tutorial how to create a target definition using Eclipse IDE and apply it to your workspace is described in 
+<http://www.vogella.com/tutorials/EclipseTargetPlatform/article.html>.
  It is good practice to develop and build against a specific target definition. This way it can be ensured that dependencies and their versions doesn’t change during the development. 
  Eclipse allows us to define target definition based on directories. So the base for our target definition we will use our installation
  
@@ -108,7 +109,7 @@ Copy equinox.application product and using Content tab in Product Editor add
  - add org.apache.commons.lang3
  
 Product can be exported to file and becomes executable that can run osgi server or can be used to launch application in IDE.
-Launch it as Eclipse application in IDE and execute some equinox commands to analysze state.
+Launch it as Eclipse application in IDE and execute some equinox commands to analyse state.
 Notice that services are present
 
 
