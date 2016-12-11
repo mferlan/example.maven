@@ -1,7 +1,7 @@
 #OSGI services
 
-Osgi services are collaboration model between OSGI modules. Services can be declared
- - programatically using OSG API
+OSGI services are collaboration model between OSGI modules. Services can be declared
+ - programatically using OSGI API
  - Declarative Service
  - Spring DM
  - Blueprint
@@ -106,25 +106,25 @@ execute `run-osgi-server.bat` to start server
 
 	setibsl 4
 	
-	install file:bundles\sample.service-1.0.0.jar
+	install file:bundles/sample.service-1.0.0.jar
 	
-	install file:bundles\sample.consumer-1.0.0.jar
+	install file:bundles/sample.consumer-1.0.0.jar
 	
-	install file:bundles\commons-lang3-3.4.jar
+	install file:bundles/commons-lang3-3.4.jar
 	
-	install file:bundles\org.eclipse.osgi.services.jar
+	install file:bundles/org.eclipse.osgi.services.jar
 	
-	install file:bundles\org.eclipse.equinox.util.jar
+	install file:bundles/org.eclipse.equinox.util.jar
 	
-	install file:bundles\org.eclipse.equinox.ds.jar
+	install file:bundles/org.eclipse.equinox.ds.jar
 	
-	setbsl 2 file:bundles\org.eclipse.equinox.ds.jar
+	setbsl 2 file:bundles/org.eclipse.equinox.ds.jar
 	
-	start file:bundles\org.eclipse.equinox.ds.jar
+	start file:bundles/org.eclipse.equinox.ds.jar
 	
-	start file:bundles\sample.service-1.0.0.jar
+	start file:bundles/sample.service-1.0.0.jar
 	
-	start file:bundles\sample.consumer-1.0.0.jar
+	start file:bundles/sample.consumer-1.0.0.jar
 	
 	list
 
