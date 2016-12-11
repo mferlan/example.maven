@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="mocked-service">
-   <implementation class="de.atron.test.sample.impl.MockedService"/>
-   <service>
-      <provide interface="de.atron.test.sample.MockedInterface"/>
-   </service>
-</scr:component>

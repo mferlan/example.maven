@@ -1,5 +1,63 @@
-#Convert projects to plug-ins (MANIFEST first approach)
+#Hybrid approach
 
+- pure maven build
+- PDE development
+
+To achieve this, MANIFEST and DS xml must be generated automatically.
+We are gonna use **maven-resources-plugin** to copy generated files to locations recognisable by PDE.
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>copy-manifests</id>
+						<!-- here the phase you need -->
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/META-INF</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/target/classes/META-INF</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-ds</id>
+						<!-- here the phase you need -->
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/OSGI-INF</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/target/classes/OSGI-INF</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+That's it.
+Now we can use our projects with PDE tooling.
+ - Open and view MANIFEST with supported editors
+ - create launch configurations
+ - easily debug code in OSGI environment
+ 
+Problems:
+ how to reference third party dependencies
+ 
+ **we need a target platform** 
+   
 Differences between maven project and PDE project:
  - adds Plugin Nature
  - classic java structure <br>
@@ -51,72 +109,4 @@ Run `generate-sources` goal on  project `de.atron.testing.sample.dependencies` t
 Open  `de.atron.testing.sample.target/tycho.sample.target` in Eclipse IDE and click on `Set as target platform`.
 
 
-## How to create projects
-
-### How to convert sample.service
-Now that our target platform is configured, create new projects using Eclipse IDE:
-
-	`File -> New -> Plug-in Project`
-	
- - enter project name e.g. de.atron.testing.sample.service and leave other fields as default -> Next
- - Uncheck `This plugin will make contributions to UI`
- - do not create Activator
- - Finish
- 
-
-Copy content of a `sample/sample.service/src/main/java` to `de.atron.testing.sample.service/src`.
-Open META-INF/MANIFEST.MF in Eclipse IDE and under runtime export only `de.atron.test.sample` package.
-For simlicity sake, we will 
-	
-	Require-Bundle: org.eclipse.osgi;bundle-version="3.10.100", 
-	 org.eclipse.osgi.services;bundle-version="3.5.0"
-
-### How to convert sample.consumer
-Test classes are not kept in bundle. For test classes special project called fragment is created. Fragment extends bundle's classpath. It uses same classloader as host bundle, therefore it has access to all its internal implementations that are subject to tests.
-
-For creating host bundle from service.consumer project we will follow the same procedure as with de.atron.testing.sample.service, just use appropriate name: de.atron.testing.sample.service
-
-And instead of exporting `de.atron.test.sample` package we will import it using dependencies tab in Manifest Editor.
-Asside from de.atron.test.sample package we need to import `org.apache.commons.lang3 package`.
-
-
-For creating [test fragment](http://www.vogella.com/tutorials/EclipseFragmentProject/article.html) we will open
-
-	`File -> New -> Other -> Plug-in Development -> Fragment Project`
-	
-Procedure is similar like creating new plugin, it just requires to define Host bundle.In our case it would be 
-de.atron.testing.sample.consumer
-
-Copy content of a `sample/sample.consumer/src/test/java` to `de.atron.testing.sample.consumer.test/src`.
-Add require bundle to test dependencies:
-
-	Require-Bundle: org.junit;bundle-version="4.12.0",
-	 org.assertj.core;bundle-version="3.4.1",
-	 org.mockito.mockito-core;bundle-version="1.10.19",
-	 org.objenesis;bundle-version="2.1.0",
-	 org.hamcrest.core;bundle-version="1.3.0"
-
-
- Run TestedServiceTest as Junit and this will run test.
- 
-
-## How to create a product
-
-Copy equinox.application product and using Content tab in Product Editor add 
- - remove sample.consumer dependency (marked as error)
- - add de.atron.testing.sample.service
- - add de.atron.testing.sample.consumer
- - add org.apache.commons.lang3
- 
-Product can be exported to file and becomes executable that can run osgi server or can be used to launch application in IDE.
-Launch it as Eclipse application in IDE and execute some equinox commands to analyse state.
-Notice that services are present
-
-
-## How to declare services
-
-see git projects OSGI-INF folder and manifest.
-They need to be added manually
-
-<http://www.vogella.com/tutorials/OSGiServices/article.html#tutorial-define-a-declarative-osgi-service>
  

@@ -63,6 +63,73 @@
 	</dependencyManagement>
 
 	<build>
+		<plugins>
+			<plugin>
+				<!-- http://njbartlett.name/2015/03/27/announcing-bnd-maven-plugin.html -->
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-maven-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>bnd-process</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- The following configuration is required because bnd-maven-plugin 
+				generates the manifest to target/classes/META-INF/MANIFEST.MF but the normal 
+				maven-jar-plugin does not use it. If the jar-plugin is patched to pick up 
+				the manifest from this location, then the following config is not needed. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<useDefaultManifestFile>true</useDefaultManifestFile>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>copy-manifests</id>
+						<!-- here the phase you need -->
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/META-INF</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/target/classes/META-INF</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-ds</id>
+						<!-- here the phase you need -->
+						<phase>process-classes</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/OSGI-INF</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/target/classes/OSGI-INF</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
