@@ -104,10 +104,10 @@ Edit *equinox.application.product* using notepad and in plugins tab add
 Also, update pom.xml to add dependency to sample.consumer
 
 	<dependency>
-		<groupId>de.atron.testing<groupId>
+		<groupId>de.atron.testing</groupId>
 		<artifactId>sample.consumer</artifactId>
 		<version>1.0.0</version>
-	<dependency>
+	</dependency>
 	
 Install sample project
 
